@@ -6,6 +6,9 @@ class Assignment:
         self.submission_list = []
 
     def submit(self, submission):
+        if (type(submission) != Submission):
+            print("Submission error")
+            return
         self.submission_list.append(submission)
 
 class Submission:

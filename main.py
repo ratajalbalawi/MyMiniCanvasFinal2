@@ -4,11 +4,12 @@ from course import CourseManager, Course
 from user import UserManager
 from fastapi.security import APIKeyHeader
 
+
 coursemanager = CourseManager()
 usermanager = UserManager()
-usermanager.create_a_user("John", "pwd", "studnet")
-usermanager.create_a_user("Alice", "pwd", "teacher")
-usermanager.create_a_user("Jimmy", "pwd", "admin")
+usermanager.create_a_user("John", "pwd", "Studnet")
+usermanager.create_a_user("Alice", "pwd", "Teacher")
+usermanager.create_a_user("Jimmy", "pwd", "Admin")
 
 app = FastAPI()
 
@@ -22,6 +23,10 @@ def create_a_course(coursecode: str,
                     teacher_id_list: List[int]) -> int:
     ### an admin should create a course
     teacher_list = usermanager.find_users(teacher_id_list)
+    if (len(teacher_list) == 0):
+        print("Teacher id error")
+        return -1
+    
     course_id = coursemanager.create_a_course(coursecode, semester, teacher_list)
     
     course = coursemanager.find_a_course(course_id)
@@ -33,7 +38,15 @@ def create_a_course(coursecode: str,
 def import_students(courseid: int,
                     student_id_list: List[int]) -> None:
     course = coursemanager.find_a_course(courseid)
+    if (course == None):
+        print("Course id error")
+        return None
+
     student_list = usermanager.find_users(student_id_list)
+    if (len(student_list) == 0):
+        print("Student id error")
+        return None
+
     course.import_students(student_list)
     
     print(course.course_id)
